@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>movieBox - Cinema Showcase</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Minimalist Executive Header -->
+    <header class="navbar">
+        <a href="/" class="brand">
+            <div class="brand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="4.5"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+            </div>
+            <span>movieBox</span>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Showcase</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        
+        <div class="hero">
+            <h1 class="hero-title">Curated Cinema Trailers</h1>
+            <p class="hero-subtitle">Immersive high-definition previews and poster artwork streamed from AWS S3.</p>
+        </div>
+
+        <!-- Movie Grid or Empty State -->
+        <div id="contentContainer">
+            <div style="text-align: center; padding: 5rem; color: var(--text-muted); font-size: 1.05rem;">
+                Connecting to cloud storage...
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Widescreen Cinema Modal -->
+    <div class="modal" id="videoModal">
+        <button class="close-btn" onclick="closeModal()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="modal-content">
+            <video id="modalVideoPlayer" class="video-player" controls controlsList="nodownload"></video>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>movieBox Cloud Streaming &bull; Pure Executive Light Theme</p>
+    </footer>
+
+    <!-- Frontend Script -->
+    <script>
+        async function loadMovies() {
+            const container = document.getElementById('contentContainer');
+
+            try {
+                const res = await fetch('/api/movies');
+                const data = await res.json();
+
+                // If error, unconfigured, or no movies exist -> Render Beautiful Minimalist Empty State
+                if (data.status === 'error' || !data.movies || data.movies.length === 0) {
+                    renderEmptyState(container);
+                    return;
+                }
+
+                // Render Movie Cards
+                const grid = document.createElement('div');
+                grid.className = 'movie-grid';
+
+                data.movies.forEach(movie => {
+                    const card = document.createElement('div');
+                    card.className = 'movie-card';
+
+                    const posterHtml = movie.poster_url
+                        ? `<img src="${movie.poster_url}" alt="${movie.title}" class="poster-img">`
+                        : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8;font-size:0.9rem;font-weight:500;">Artwork Awaiting</div>`;
+
+                    const playOverlay = movie.video_url
+                        ? `<div class="play-overlay">
+                               <div class="play-btn-circle">
+                                   <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 3px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                               </div>
+                           </div>`
+                        : '';
+
+                    card.innerHTML = `
+                        <div class="poster-wrapper">
+                            ${posterHtml}
+                            ${playOverlay}
+                        </div>
+                        <div class="movie-info">
+                            <div class="movie-title">${movie.title}</div>
+                            <div class="movie-meta">
+                                <span>${movie.has_video ? 'HD Trailer' : 'Poster Feature'}</span>
+                                <span style="margin: 0 6px; opacity: 0.4;">&bull;</span>
+                                <span style="color: #64748b;">${movie.size_mb > 0 ? movie.size_mb + ' MB' : 'Cloud Stream'}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    if (movie.video_url) {
+                        card.onclick = () => openModal(movie.video_url, movie.title);
+                    }
+
+                    grid.appendChild(card);
+                });
+
+                container.innerHTML = '';
+                container.appendChild(grid);
+
+            } catch (err) {
+                renderEmptyState(container);
+            }
+        }
+
+        function renderEmptyState(container) {
+            container.innerHTML = `
+                <div class="empty-box">
+                    <div class="empty-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M19.82 2H4.18C2.97 2 2 2.97 2 4.18v15.64C2 21.03 2.97 22 4.18 22h15.64c1.21 0 2.18-.97 2.18-2.18V4.18C22 2.97 21.03 2 19.82 2Z"></path><path d="M7 2v20"></path><path d="M17 2v20"></path><path d="M2 12h20"></path><path d="M2 7h5"></path><path d="M2 17h5"></path><path d="M17 17h5"></path><path d="M17 7h5"></path></svg>
+                    </div>
+                    <h2 class="empty-title">Empty Movie Box</h2>
+                    <p class="empty-desc">The cinema showcase is currently awaiting curated trailers and visual artwork.</p>
+                </div>
+            `;
+        }
+
+        function openModal(videoUrl, title) {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('modalVideoPlayer');
+            
+            player.src = videoUrl;
+            modal.classList.add('active');
+            player.play();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('modalVideoPlayer');
+            
+            player.pause();
+            player.src = "";
+            modal.classList.remove('active');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        document.getElementById('videoModal').addEventListener('click', (e) => {
+            if (e.target.id === 'videoModal') closeModal();
+        });
+
+        window.addEventListener('DOMContentLoaded', loadMovies);
+    </script>
+</body>
+</html>

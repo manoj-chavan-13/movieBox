@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>movieBox - Admin Portal</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="navbar">
+        <a href="/" class="brand">
+            <span>movieBox</span>
+            <span class="brand-badge" style="background: #0f172a;">Admin Portal</span>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Homepage</a>
+            <a href="/admin" class="nav-link active">Admin Portal (/admin)</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <div style="margin-bottom: 2.5rem;">
+            <h1 class="hero-title">Content & Cloud Management</h1>
+            <p class="hero-subtitle">Configure your AWS S3 Cloud Storage Bucket and upload movie trailers & promotional posters.</p>
+        </div>
+
+        <div class="admin-grid">
+            <!-- PANEL 1: AWS S3 CONFIG -->
+            <div class="panel">
+                <h2 class="panel-title">1. AWS S3 Configuration</h2>
+                <p class="panel-desc">Connect movieBox to your active Amazon S3 Storage Bucket.</p>
+
+                <div id="cfgAlert" class="alert"></div>
+
+                <form id="cfgForm" onsubmit="saveConfig(event)">
+                    <div class="form-group">
+                        <label class="form-label">S3 Bucket Name</label>
+                        <input type="text" id="cfgBucket" class="form-input" placeholder="my-movie-trailers-bucket" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">AWS Region</label>
+                        <input type="text" id="cfgRegion" class="form-input" placeholder="us-east-1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">AWS Access Key ID (Optional if configured globally)</label>
+                        <input type="password" id="cfgAccess" class="form-input" placeholder="AKIAIOSFODNN7EXAMPLE">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">AWS Secret Access Key</label>
+                        <input type="password" id="cfgSecret" class="form-input" placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="saveCfgBtn" style="width: 100%; margin-top: 0.5rem;">Save Cloud Credentials</button>
+                </form>
+            </div>
+
+            <!-- PANEL 2: TRAILER & POSTER UPLOADS -->
+            <div class="panel">
+                <h2 class="panel-title">2. Upload Trailers & Posters</h2>
+                <p class="panel-desc">Select 4-5 video trailers (.mp4) and matching poster images (.jpg/.png) to upload to S3.</p>
+
+                <div id="uploadAlert" class="alert"></div>
+
+                <form id="uploadForm" onsubmit="handleUpload(event)">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="form-label">Select Video Trailers & Poster Images</label>
+                        <input type="file" name="files" class="form-input" multiple accept=".mp4,.webm,.mov,.mkv,.avi,.jpg,.jpeg,.png,.webp" required>
+                        <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 0.5rem;">
+                            💡 <strong>Tip:</strong> Name pairs similarly (e.g. `inception.mp4` and `inception.jpg`) so they automatically group together on the homepage!
+                        </span>
+                    </div>
+
+                    <button type="submit" class="btn btn-blue" id="uploadBtn" style="width: 100%;">
+                        Upload Files to S3 Bucket
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- PANEL 3: S3 LIBRARY OVERVIEW -->
+        <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="panel-title">Current S3 Movie Library</h2>
+            <button class="btn btn-primary" onclick="loadLibrary()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Refresh Table</button>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Movie Identifier</th>
+                        <th>Formatted Title</th>
+                        <th>Trailer Video Status</th>
+                        <th>Poster Image Status</th>
+                        <th>Approx Size</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="libraryTableBody">
+                    <tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">Loading S3 contents...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>movieBox Admin Console &bull; Built with Python Flask & AWS S3 API</p>
+    </footer>
+
+    <!-- Script -->
+    <script>
+        async function fetchConfig() {
+            try {
+                const res = await fetch('/api/config');
+                const cfg = await res.json();
+                document.getElementById('cfgBucket').value = cfg.bucket_name || '';
+                document.getElementById('cfgRegion').value = cfg.region || 'us-east-1';
+                document.getElementById('cfgAccess').value = cfg.access_key || '';
+                document.getElementById('cfgSecret').value = cfg.secret_key || '';
+            } catch(e) { console.error(e); }
+        }
+
+        async function saveConfig(e) {
+            e.preventDefault();
+            const btn = document.getElementById('saveCfgBtn');
+            const alert = document.getElementById('cfgAlert');
+            btn.disabled = true;
+            btn.textContent = "Saving...";
+            alert.style.display = 'none';
+
+            const payload = {
+                bucket_name: document.getElementById('cfgBucket').value,
+                region: document.getElementById('cfgRegion').value,
+                access_key: document.getElementById('cfgAccess').value,
+                secret_key: document.getElementById('cfgSecret').value
+            };
+
+            try {
+                const res = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                alert.style.display = 'block';
+                if (data.status === 'success') {
+                    alert.className = 'alert alert-success';
+                    alert.textContent = "S3 Configuration saved successfully!";
+                    loadLibrary();
+                }
+            } catch(err) {
+                alert.style.display = 'block';
+                alert.className = 'alert alert-error';
+                alert.textContent = "Failed saving config.";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Save Cloud Credentials";
+            }
+        }
+
+        async function handleUpload(e) {
+            e.preventDefault();
+            const form = document.getElementById('uploadForm');
+            const btn = document.getElementById('uploadBtn');
+            const alert = document.getElementById('uploadAlert');
+            const formData = new FormData(form);
+
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner"></span> Uploading to S3 (This may take a moment for large trailers)...`;
+            alert.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                alert.style.display = 'block';
+                if (data.status === 'success') {
+                    alert.className = 'alert alert-success';
+                    alert.textContent = data.message;
+                    form.reset();
+                    loadLibrary();
+                } else {
+                    alert.className = 'alert alert-error';
+                    alert.textContent = `Upload failed: ${data.message}`;
+                }
+            } catch(err) {
+                alert.style.display = 'block';
+                alert.className = 'alert alert-error';
+                alert.textContent = "Network Error while uploading video/image files.";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Upload Files to S3 Bucket";
+            }
+        }
+
+        async function loadLibrary() {
+            const tbody = document.getElementById('libraryTableBody');
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">Fetching S3 bucket items...</td></tr>`;
+
+            try {
+                const res = await fetch('/api/movies');
+                const data = await res.json();
+
+                if (data.status === 'error') {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #ef4444;">${data.message}</td></tr>`;
+                    return;
+                }
+
+                if (!data.movies || data.movies.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">No trailers or posters found in bucket '${data.bucket}'.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                data.movies.forEach(m => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong style="font-family: monospace;">${m.id}</strong></td>
+                        <td>${m.title}</td>
+                        <td>
+                            <span class="status-badge ${m.has_video ? 'status-yes' : 'status-no'}">
+                                ${m.has_video ? '✓ Trailer (.mp4)' : '✗ Missing'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${m.has_poster ? 'status-yes' : 'status-no'}">
+                                ${m.has_poster ? '✓ Poster Image' : '✗ Missing'}
+                            </span>
+                        </td>
+                        <td>${m.size_mb} MB</td>
+                        <td style="text-align: right;">
+                            <button class="btn btn-danger" onclick="deleteItem('${m.id}', '${m.title}')">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch(err) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #ef4444;">Network Error connecting to Flask server.</td></tr>`;
+            }
+        }
+
+        async function deleteItem(id, title) {
+            if (!confirm(`Are you sure you want to delete all S3 media files (video/poster) for '${title}'?`)) return;
+
+            try {
+                const res = await fetch('/api/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    loadLibrary();
+                } else {
+                    alert(`Delete failed: ${data.message}`);
+                }
+            } catch(e) {
+                alert("Network error deleting item.");
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchConfig();
+            loadLibrary();
+        });
+    </script>
+</body>
+</html>
