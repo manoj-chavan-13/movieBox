@@ -238,8 +238,9 @@
                             </span>
                         </td>
                         <td>${m.size_mb} MB</td>
-                        <td style="text-align: right;">
-                            <button class="btn btn-danger" onclick="deleteItem('${m.id}', '${m.title}')">Delete</button>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <button class="btn btn-blue" onclick="renameItem('${m.id}', '${m.title}')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-right: 0.4rem;">Rename</button>
+                            <button class="btn btn-danger" onclick="deleteItem('${m.id}', '${m.title}')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Delete</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -247,6 +248,27 @@
 
             } catch(err) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #ef4444;">Network Error connecting to Flask server.</td></tr>`;
+            }
+        }
+
+        async function renameItem(id, title) {
+            const newTitle = prompt(`Enter new title for '${title}':\n(Note: This will rename both poster and trailer files)`, title);
+            if (!newTitle || newTitle.trim() === '' || newTitle.trim() === title) return;
+
+            try {
+                const res = await fetch('/api/rename', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ old_id: id, new_title: newTitle.trim() })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    loadLibrary();
+                } else {
+                    alert(`Rename failed: ${data.message}`);
+                }
+            } catch(e) {
+                alert("Network error renaming item.");
             }
         }
 

@@ -246,6 +246,100 @@ def delete_movie():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route("/api/rename", methods=["POST"])
+def rename_movie():
+    cfg = get_config()
+    bucket = cfg.get("bucket_name")
+    catalog = get_catalog()
+    
+    old_id = request.json.get("old_id")
+    new_title = request.json.get("new_title", "").strip()
+    
+    if not old_id or not new_title:
+        return jsonify({"status": "error", "message": "Missing movie ID or new title."}), 400
+        
+    new_id = re.sub(r'[^a-zA-Z0-9]', '_', new_title).strip('_').lower()
+    new_id = re.sub(r'_+', '_', new_id)
+    
+    if not new_id:
+        return jsonify({"status": "error", "message": "Invalid new movie title."}), 400
+        
+    if new_id != old_id and new_id in catalog:
+        return jsonify({"status": "error", "message": f"Cannot rename: movie '{new_id}' already exists."}), 400
+        
+    for ext in VIDEO_EXTS + IMAGE_EXTS:
+        if new_id != old_id and os.path.exists(os.path.join(LOCAL_MEDIA_DIR, new_id + ext)):
+            return jsonify({"status": "error", "message": f"Cannot rename: file '{new_id}{ext}' already exists."}), 400
+
+    try:
+        # 1. Rename in S3 if bucket configured
+        if bucket and new_id != old_id:
+            try:
+                s3 = get_s3_client()
+                resp = s3.list_objects_v2(Bucket=bucket)
+                for obj in resp.get("Contents", []):
+                    key = obj["Key"]
+                    base, ext = os.path.splitext(key)
+                    if base == old_id:
+                        new_key = new_id + ext
+                        s3.copy_object(Bucket=bucket, CopySource={'Bucket': bucket, 'Key': key}, Key=new_key)
+                        s3.delete_object(Bucket=bucket, Key=key)
+            except Exception as e:
+                print(f"S3 rename warning: {e}")
+                
+        # 2. Rename local files if any
+        if new_id != old_id:
+            for ext in VIDEO_EXTS + IMAGE_EXTS:
+                old_p = os.path.join(LOCAL_MEDIA_DIR, old_id + ext)
+                if os.path.exists(old_p):
+                    new_p = os.path.join(LOCAL_MEDIA_DIR, new_id + ext)
+                    try:
+                        os.rename(old_p, new_p)
+                    except Exception as e:
+                        print(f"Local rename warning: {e}")
+                        
+        # 3. Update catalog entry
+        if old_id in catalog:
+            item = catalog[old_id]
+        else:
+            item = {
+                "id": old_id,
+                "title": new_title,
+                "video_url": None,
+                "poster_url": None,
+                "has_video": False,
+                "has_poster": False,
+                "size_mb": 0
+            }
+            
+        item["id"] = new_id
+        item["title"] = new_title
+        
+        if new_id != old_id:
+            if item.get("video_url"):
+                ext = os.path.splitext(item["video_url"])[1]
+                if item["video_url"].startswith("/s3_media/"):
+                    item["video_url"] = f"/s3_media/{new_id}{ext}"
+                elif item["video_url"].startswith("/static/media/"):
+                    item["video_url"] = f"/static/media/{new_id}{ext}"
+                    
+            if item.get("poster_url"):
+                ext = os.path.splitext(item["poster_url"])[1]
+                if item["poster_url"].startswith("/s3_media/"):
+                    item["poster_url"] = f"/s3_media/{new_id}{ext}"
+                elif item["poster_url"].startswith("/static/media/"):
+                    item["poster_url"] = f"/static/media/{new_id}{ext}"
+                    
+            if old_id in catalog:
+                del catalog[old_id]
+                
+        catalog[new_id] = item
+        save_catalog(catalog)
+        
+        return jsonify({"status": "success", "message": f"Successfully renamed movie to '{new_title}' (both poster & trailer updated)."})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route("/s3_media/<path:key>")
 def serve_s3_media(key):
     cfg = get_config()
