@@ -95,15 +95,23 @@
         <div class="modal-dialog">
             <div class="modal-header">
                 <div class="modal-now-playing" id="modalPlayingHeader">
-                    <span class="now-playing-pill">🔴 STREAMING HD</span>
+                    <span class="now-playing-pill">🔴 STREAMING 4K</span>
                     <span id="modalTitleText" style="font-weight: 800;">Now Playing</span>
                 </div>
-                <button class="close-btn" id="modalCloseBtn" onclick="closeModal()">
+                <button class="close-btn" id="modalCloseBtn" onclick="closeModal()" title="Exit Theater Mode (Esc)">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
             <div class="modal-content">
-                <video id="modalVideoPlayer" class="video-player" controls controlsList="nodownload"></video>
+                <video id="modalVideoPlayer" class="video-player" controls controlsList="nodownload autoplay"></video>
+            </div>
+            <div class="modal-footer-bar">
+                <div class="theater-meta">
+                    <span class="tech-tag">AWS S3 CLOUD</span>
+                    <span class="tech-tag">LOSSLESS RANGE STREAM</span>
+                    <span class="tech-tag">DOLBY ATMOS</span>
+                </div>
+                <div class="theater-hint">Press <kbd>ESC</kbd> or click backdrop to exit theater</div>
             </div>
         </div>
     </div>
