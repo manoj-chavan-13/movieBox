@@ -219,10 +219,19 @@
 
         function setFilter(type) {
             currentFilter = type;
+
+            // Update content filter tabs
             document.querySelectorAll('.ott-tab').forEach(btn => btn.classList.remove('active'));
             if (type === 'all') document.getElementById('filterAllBtn').classList.add('active');
             else if (type === 'trailers') document.getElementById('filterTrailersBtn').classList.add('active');
             else if (type === 'posters') document.getElementById('filterPostersBtn').classList.add('active');
+
+            // Sync navbar active state
+            document.querySelectorAll('.ott-nav-link').forEach(link => link.classList.remove('active'));
+            if (type === 'all') document.getElementById('navHomeLink').classList.add('active');
+            else if (type === 'trailers') document.getElementById('navTrailersLink').classList.add('active');
+            else if (type === 'posters') document.getElementById('navGalleryLink').classList.add('active');
+
             filterMovies();
         }
 

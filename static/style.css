@@ -114,9 +114,28 @@ body {
     transition: all 0.2s ease;
 }
 
-.ott-nav-link:hover, .ott-nav-link.active {
+.ott-nav-link:hover {
     color: #0f172a;
     background: #f1f5f9;
+}
+
+.ott-nav-link.active {
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.08);
+    font-weight: 700;
+    position: relative;
+}
+
+.ott-nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2.5px;
+    background: #2563eb;
+    border-radius: 2px;
 }
 
 .studio-link {
