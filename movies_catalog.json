@@ -1,0 +1,38 @@
+{
+  "12_th_fail": {
+    "id": "12_th_fail",
+    "title": "12 Th Fail",
+    "video_url": "/s3_media/12_th_fail.mp4",
+    "poster_url": "/s3_media/12_th_fail.jpg",
+    "has_video": true,
+    "has_poster": true,
+    "size_mb": 19.73
+  },
+  "angrezi_medium": {
+    "id": "angrezi_medium",
+    "title": "Angrezi Medium",
+    "video_url": "/s3_media/angrezi_medium.mp4",
+    "poster_url": "/s3_media/angrezi_medium.jpg",
+    "has_video": true,
+    "has_poster": true,
+    "size_mb": 19.26
+  },
+  "classmate": {
+    "id": "classmate",
+    "title": "Classmate",
+    "video_url": null,
+    "poster_url": "/s3_media/classmate.jpg",
+    "has_video": false,
+    "has_poster": true,
+    "size_mb": 0
+  },
+  "dear_zindagi": {
+    "id": "dear_zindagi",
+    "title": "Dear Zindagi",
+    "video_url": "/s3_media/dear_zindagi.mp4",
+    "poster_url": "/s3_media/dear_zindagi.jpg",
+    "has_video": true,
+    "has_poster": true,
+    "size_mb": 14.39
+  }
+}

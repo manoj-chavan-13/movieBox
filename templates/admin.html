@@ -3,95 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>movieBox - Admin Portal</title>
+    <title>movieBox Studio Admin - Cloud Management Console</title>
+    <meta name="description" content="movieBox Studio Admin portal for batch uploading high-definition movie trailers, managing AWS S3 storage credentials, and catalog curation.">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-    <!-- Header -->
-    <header class="navbar">
-        <a href="/" class="brand">
-            <span>movieBox</span>
-            <span class="brand-badge" style="background: #0f172a;">Admin Portal</span>
-        </a>
-        <nav class="nav-links">
-            <a href="/" class="nav-link">Homepage</a>
-            <a href="/admin" class="nav-link active">Admin Portal (/admin)</a>
-        </nav>
+    <!-- Professional OTT Navbar -->
+    <header class="ott-navbar" id="adminNavbar">
+        <div class="nav-left">
+            <a href="/" class="brand" id="adminBrandLogo">
+                <div class="brand-emblem">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"></polygon></svg>
+                </div>
+                <span class="brand-text">movieBox</span>
+            </a>
+            <span style="font-size: 0.75rem; font-weight: 800; background: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 6px; letter-spacing: 0.05em; text-transform: uppercase; box-shadow: 0 2px 8px rgba(239,68,68,0.3);">Studio Console</span>
+        </div>
+
+        <div class="nav-right">
+            <nav class="ott-nav-links">
+                <a href="/" class="ott-nav-link" id="adminNavHomeLink">⬅ Launch Showcase</a>
+                <a href="/admin" class="ott-nav-link active" id="adminNavStudioLink">Studio Admin</a>
+            </nav>
+        </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container">
+    <main class="ott-main" id="adminMainArea">
 
-        <div style="margin-bottom: 2.5rem;">
-            <h1 class="hero-title">Content & Cloud Management</h1>
-            <p class="hero-subtitle">Configure your AWS S3 Cloud Storage Bucket and upload movie trailers & promotional posters.</p>
+        <div style="margin-bottom: 3.5rem;">
+            <div style="display:inline-flex; align-items:center; gap: 0.5rem; color:#2563eb; font-weight:800; font-size:0.8rem; letter-spacing:0.05em; text-transform:uppercase; margin-bottom: 0.75rem;">
+                <span class="pulse-dot"></span> Enterprise AWS S3 Cluster
+            </div>
+            <h1 class="billboard-title" style="font-size: 3.2rem; margin-bottom: 0.75rem;">Studio Media & Cloud Console</h1>
+            <p class="billboard-synopsis" style="margin-bottom: 0; max-width: 780px;">Configure your AWS S3 Cloud Storage credentials, ingest 4K cinema trailers, and manage promotional poster artwork.</p>
         </div>
 
         <div class="admin-grid">
             <!-- PANEL 1: AWS S3 CONFIG -->
-            <div class="panel">
+            <div class="panel" id="panelS3Config">
                 <h2 class="panel-title">1. AWS S3 Configuration</h2>
-                <p class="panel-desc">Connect movieBox to your active Amazon S3 Storage Bucket.</p>
+                <p class="panel-desc">Connect movieBox directly to your active Amazon S3 Storage Bucket.</p>
 
                 <div id="cfgAlert" class="alert"></div>
 
                 <form id="cfgForm" onsubmit="saveConfig(event)">
                     <div class="form-group">
-                        <label class="form-label">S3 Bucket Name</label>
+                        <label class="form-label" for="cfgBucket">S3 Bucket Name</label>
                         <input type="text" id="cfgBucket" class="form-input" placeholder="my-movie-trailers-bucket" required>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">AWS Region</label>
+                        <label class="form-label" for="cfgRegion">AWS Region</label>
                         <input type="text" id="cfgRegion" class="form-input" placeholder="us-east-1" required>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">AWS Access Key ID (Optional if configured globally)</label>
+                        <label class="form-label" for="cfgAccess">AWS Access Key ID (Optional if configured globally)</label>
                         <input type="password" id="cfgAccess" class="form-input" placeholder="AKIAIOSFODNN7EXAMPLE">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">AWS Secret Access Key</label>
+                        <label class="form-label" for="cfgSecret">AWS Secret Access Key</label>
                         <input type="password" id="cfgSecret" class="form-input" placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY">
                     </div>
 
-                    <button type="submit" class="btn btn-primary" id="saveCfgBtn" style="width: 100%; margin-top: 0.5rem;">Save Cloud Credentials</button>
+                    <button type="submit" class="btn btn-primary" id="saveCfgBtn" style="width: 100%; margin-top: 0.75rem; padding: 0.9rem;">Save Cloud Credentials</button>
                 </form>
             </div>
 
             <!-- PANEL 2: TRAILER & POSTER UPLOADS -->
-            <div class="panel">
-                <h2 class="panel-title">2. Upload Trailers & Posters</h2>
-                <p class="panel-desc">Select 4-5 video trailers (.mp4) and matching poster images (.jpg/.png) to upload to S3.</p>
+            <div class="panel" id="panelMediaIngest">
+                <h2 class="panel-title">2. Ingest Trailers & Posters</h2>
+                <p class="panel-desc">Select HD video trailers (.mp4) and matching poster artwork (.jpg/.png) to ingest into S3.</p>
 
                 <div id="uploadAlert" class="alert"></div>
 
                 <form id="uploadForm" onsubmit="handleUpload(event)">
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label class="form-label">Select Video Trailers & Poster Images</label>
-                        <input type="file" name="files" class="form-input" multiple accept=".mp4,.webm,.mov,.mkv,.avi,.jpg,.jpeg,.png,.webp" required>
-                        <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 0.5rem;">
-                            💡 <strong>Tip:</strong> Name pairs similarly (e.g. `inception.mp4` and `inception.jpg`) so they automatically group together on the homepage!
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label class="form-label" for="filesInput">Select Video Trailers & Poster Images</label>
+                        <input type="file" id="filesInput" name="files" class="form-input" multiple accept=".mp4,.webm,.mov,.mkv,.avi,.jpg,.jpeg,.png,.webp" required style="padding: 1.2rem;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-top: 0.75rem; line-height: 1.5;">
+                            💡 <strong>Tip:</strong> Name pairs similarly (e.g. `inception.mp4` and `inception.jpg`) so they automatically pair together on the showcase!
                         </span>
                     </div>
 
-                    <button type="submit" class="btn btn-blue" id="uploadBtn" style="width: 100%;">
-                        Upload Files to S3 Bucket
+                    <button type="submit" class="btn btn-blue" id="uploadBtn" style="width: 100%; padding: 0.9rem;">
+                        Ingest Files to S3 Vault
                     </button>
                 </form>
             </div>
         </div>
 
         <!-- PANEL 3: S3 LIBRARY OVERVIEW -->
-        <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-            <h2 class="panel-title">Current S3 Movie Library</h2>
-            <button class="btn btn-primary" onclick="loadLibrary()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Refresh Table</button>
+        <div style="margin-bottom: 1.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h2 class="panel-title" style="margin-bottom: 0.2rem;">Active S3 Cinema Vault</h2>
+                <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Real-time synchronized bucket manifest</span>
+            </div>
+            <button class="btn btn-primary" id="refreshTableBtn" onclick="loadLibrary()" style="padding: 0.7rem 1.5rem; font-size: 0.88rem;">Refresh Manifest Table</button>
         </div>
 
         <div class="table-container">
-            <table class="table">
+            <table class="table" id="manifestTable">
                 <thead>
                     <tr>
                         <th>Movie Identifier</th>
@@ -99,20 +114,34 @@
                         <th>Trailer Video Status</th>
                         <th>Poster Image Status</th>
                         <th>Approx Size</th>
-                        <th style="text-align: right;">Actions</th>
+                        <th style="text-align: right;">Studio Actions</th>
                     </tr>
                 </thead>
                 <tbody id="libraryTableBody">
-                    <tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">Loading S3 contents...</td></tr>
+                    <tr><td colspan="6" style="text-align: center; padding: 4rem; color: var(--text-muted); font-weight: 600;">⚡ Synchronizing vault manifest from S3...</td></tr>
                 </tbody>
             </table>
         </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>movieBox Admin Console &bull; Built with Python Flask & AWS S3 API</p>
+    <!-- OTT Footer -->
+    <footer class="ott-footer" id="adminFooter">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="brand" style="margin-bottom: 0.6rem;">
+                    <div class="brand-emblem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"></polygon></svg></div>
+                    <span class="brand-text">movieBox</span>
+                </div>
+                <p class="footer-tagline">Professional Studio Admin & Cloud Curation Portal</p>
+            </div>
+            <div class="footer-links">
+                <a href="/">Showcase</a> &bull; <a href="/admin">Studio Admin Portal</a> &bull; <a href="/api/movies">JSON Catalog API</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 movieBox Enterprise Platform &bull; Executive Luxury Light Theme &bull; Powered by AWS S3 API</p>
+        </div>
     </footer>
 
     <!-- Script -->
@@ -133,7 +162,7 @@
             const btn = document.getElementById('saveCfgBtn');
             const alert = document.getElementById('cfgAlert');
             btn.disabled = true;
-            btn.textContent = "Saving...";
+            btn.textContent = "Saving Credentials...";
             alert.style.display = 'none';
 
             const payload = {
@@ -153,13 +182,13 @@
                 alert.style.display = 'block';
                 if (data.status === 'success') {
                     alert.className = 'alert alert-success';
-                    alert.textContent = "S3 Configuration saved successfully!";
+                    alert.textContent = "✓ S3 Configuration saved successfully!";
                     loadLibrary();
                 }
             } catch(err) {
                 alert.style.display = 'block';
                 alert.className = 'alert alert-error';
-                alert.textContent = "Failed saving config.";
+                alert.textContent = "✗ Failed saving cloud credentials.";
             } finally {
                 btn.disabled = false;
                 btn.textContent = "Save Cloud Credentials";
@@ -174,7 +203,7 @@
             const formData = new FormData(form);
 
             btn.disabled = true;
-            btn.innerHTML = `<span class="spinner"></span> Uploading to S3 (This may take a moment for large trailers)...`;
+            btn.innerHTML = `⚡ Ingesting media to S3 (Please wait for high-bitrate trailers)...`;
             alert.style.display = 'none';
 
             try {
@@ -186,38 +215,38 @@
                 alert.style.display = 'block';
                 if (data.status === 'success') {
                     alert.className = 'alert alert-success';
-                    alert.textContent = data.message;
+                    alert.textContent = `✓ ${data.message}`;
                     form.reset();
                     loadLibrary();
                 } else {
                     alert.className = 'alert alert-error';
-                    alert.textContent = `Upload failed: ${data.message}`;
+                    alert.textContent = `✗ Ingest failed: ${data.message}`;
                 }
             } catch(err) {
                 alert.style.display = 'block';
                 alert.className = 'alert alert-error';
-                alert.textContent = "Network Error while uploading video/image files.";
+                alert.textContent = "✗ Network error during media upload.";
             } finally {
                 btn.disabled = false;
-                btn.textContent = "Upload Files to S3 Bucket";
+                btn.textContent = "Ingest Files to S3 Vault";
             }
         }
 
         async function loadLibrary() {
             const tbody = document.getElementById('libraryTableBody');
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">Fetching S3 bucket items...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 4rem; color: var(--text-muted); font-weight: 600;">⚡ Synchronizing vault manifest from S3...</td></tr>`;
 
             try {
                 const res = await fetch('/api/movies');
                 const data = await res.json();
 
                 if (data.status === 'error') {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #ef4444;">${data.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: #ef4444; font-weight: 600;">✗ ${data.message}</td></tr>`;
                     return;
                 }
 
                 if (!data.movies || data.movies.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">No trailers or posters found in bucket '${data.bucket}'.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 4rem; color: var(--text-muted); font-weight: 500;">No cinema trailers or artwork posters found in active storage bucket.</td></tr>`;
                     return;
                 }
 
@@ -225,11 +254,11 @@
                 data.movies.forEach(m => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><strong style="font-family: monospace;">${m.id}</strong></td>
-                        <td>${m.title}</td>
+                        <td><strong style="font-family: monospace; color: #0f172a; font-size: 0.95rem;">${m.id}</strong></td>
+                        <td style="font-weight: 700; color: #0f172a;">${m.title}</td>
                         <td>
                             <span class="status-badge ${m.has_video ? 'status-yes' : 'status-no'}">
-                                ${m.has_video ? '✓ Trailer (.mp4)' : '✗ Missing'}
+                                ${m.has_video ? '✓ HD Video (.mp4)' : '✗ Missing'}
                             </span>
                         </td>
                         <td>
@@ -237,22 +266,22 @@
                                 ${m.has_poster ? '✓ Poster Image' : '✗ Missing'}
                             </span>
                         </td>
-                        <td>${m.size_mb} MB</td>
+                        <td style="font-weight: 600; color: #475569;">${m.size_mb} MB</td>
                         <td style="text-align: right; white-space: nowrap;">
-                            <button class="btn btn-blue" onclick="renameItem('${m.id}', '${m.title}')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-right: 0.4rem;">Rename</button>
-                            <button class="btn btn-danger" onclick="deleteItem('${m.id}', '${m.title}')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Delete</button>
+                            <button class="btn btn-blue" onclick="renameItem('${m.id}', '${m.title.replace(/'/g, "\\'")}')" style="padding: 0.5rem 1rem; font-size: 0.85rem; margin-right: 0.5rem; border-radius: 8px;">Rename</button>
+                            <button class="btn btn-danger" onclick="deleteItem('${m.id}', '${m.title.replace(/'/g, "\\'")}')" style="padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 8px;">Delete</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
 
             } catch(err) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #ef4444;">Network Error connecting to Flask server.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: #ef4444; font-weight: 600;">✗ Network error connecting to backend server.</td></tr>`;
             }
         }
 
         async function renameItem(id, title) {
-            const newTitle = prompt(`Enter new title for '${title}':\n(Note: This will rename both poster and trailer files)`, title);
+            const newTitle = prompt(`Enter new professional title for '${title}':\n(Note: This will automatically rename both poster and trailer files in S3)`, title);
             if (!newTitle || newTitle.trim() === '' || newTitle.trim() === title) return;
 
             try {
