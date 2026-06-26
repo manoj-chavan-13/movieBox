@@ -7,4 +7,5 @@ env/
 *.log
 .DS_Store
 config.json
+movies_catalog.json
 static/media/
