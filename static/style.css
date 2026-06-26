@@ -411,7 +411,7 @@ body {
 
 /* Category Filter & Section Header */
 .content-showcase {
-    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .section-header {
@@ -421,68 +421,71 @@ body {
     margin-bottom: 2rem;
     flex-wrap: wrap;
     gap: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .section-title-group {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.85rem;
 }
 
 .section-title {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 800;
     color: #0f172a;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
 }
 
 .section-count {
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     font-weight: 700;
-    color: #64748b;
-    background: #f1f5f9;
-    padding: 0.25rem 0.75rem;
+    color: #2563eb;
+    background: rgba(37,99,235,0.08);
+    border: 1px solid rgba(37,99,235,0.2);
+    padding: 0.2rem 0.7rem;
     border-radius: 9999px;
 }
 
 .ott-filter-tabs {
     display: flex;
     background: #f1f5f9;
-    padding: 0.3rem;
+    padding: 0.25rem;
     border-radius: 12px;
-    gap: 0.25rem;
+    gap: 0.2rem;
+    border: 1px solid #e2e8f0;
 }
 
 .ott-tab {
-    padding: 0.5rem 1.2rem;
-    font-size: 0.85rem;
-    font-weight: 700;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.84rem;
+    font-weight: 600;
     color: #64748b;
     background: transparent;
     border: none;
-    border-radius: 10px;
+    border-radius: 9px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.18s;
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.4rem;
 }
 
-.ott-tab:hover { color: #0f172a; }
+.ott-tab:hover { color: #0f172a; background: rgba(255,255,255,0.6); }
 
 .ott-tab.active {
     background: white;
-    color: #0f172a;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    color: #2563eb;
+    box-shadow: 0 1px 6px rgba(15, 23, 42, 0.1);
+    font-weight: 700;
 }
 
 /* Movie Grid & OTT Cards */
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.75rem;
 }
 
 .movie-card {
@@ -499,15 +502,15 @@ body {
 }
 
 .movie-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 24px 48px -8px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(37,99,235,0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(37,99,235,0.14), 0 2px 8px rgba(37,99,235,0.06);
     border-color: transparent;
     z-index: 20;
 }
 
 .poster-wrapper {
     width: 100%;
-    aspect-ratio: 2 / 3;
+    aspect-ratio: 16 / 9;
     background-color: #0a0f1e;
     position: relative;
     overflow: hidden;
@@ -595,19 +598,18 @@ body {
 }
 
 .movie-info {
-    padding: 1.25rem 1.5rem 1.4rem;
+    padding: 1.1rem 1.35rem 1.25rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     background: white;
+    gap: 0.5rem;
 }
 
 .movie-title {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 800;
     color: #0f172a;
-    letter-spacing: -0.025em;
-    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
     line-height: 1.4;
     transition: color 0.2s;
     white-space: nowrap;
@@ -621,20 +623,21 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: #64748b;
     font-weight: 600;
-    padding-top: 0.6rem;
+    padding-top: 0.5rem;
     border-top: 1px solid #f1f5f9;
 }
 
 .meta-size {
     font-weight: 700;
-    color: #334155;
-    background: #f1f5f9;
+    color: #475569;
+    background: #f8fafc;
     padding: 0.15rem 0.6rem;
     border-radius: 6px;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
+    border: 1px solid #e2e8f0;
 }
 
 .card-type-label {
