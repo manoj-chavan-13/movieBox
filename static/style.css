@@ -35,9 +35,9 @@ h1, h2, h3, .brand-text, .billboard-title, .section-title, .empty-title, .panel-
 body {
     background-color: #f8fafc;
     background-image: 
-        radial-gradient(at 0% 0%, rgba(224, 231, 255, 0.8) 0px, transparent 60%),
-        radial-gradient(at 100% 0%, rgba(224, 242, 254, 0.8) 0px, transparent 60%),
-        radial-gradient(at 50% 100%, rgba(241, 245, 249, 0.9) 0px, transparent 75%);
+        radial-gradient(ellipse at 0% 0%, rgba(219, 234, 254, 0.7) 0px, transparent 55%),
+        radial-gradient(ellipse at 100% 0%, rgba(224, 231, 255, 0.65) 0px, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(241, 245, 249, 1) 0px, transparent 65%);
     background-attachment: fixed;
     color: var(--text-primary);
     line-height: 1.6;
@@ -52,15 +52,16 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.9);
-    padding: 0.9rem 3.5rem;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: saturate(180%) blur(28px);
+    -webkit-backdrop-filter: saturate(180%) blur(28px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+    padding: 0.85rem 4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 30px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 0 rgba(226,232,240,0.8), 0 8px 32px rgba(15, 23, 42, 0.05);
+    transition: background 0.3s;
 }
 
 .nav-left, .nav-right {
@@ -80,22 +81,22 @@ body {
 .brand:hover { opacity: 0.9; }
 
 .brand-emblem {
-    width: 42px;
-    height: 42px;
-    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(145deg, #1d4ed8 0%, #4338ca 100%);
     color: white;
-    border-radius: 12px;
+    border-radius: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .brand-text {
-    font-size: 1.55rem;
+    font-size: 1.5rem;
     font-weight: 800;
     color: #0f172a;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.05em;
 }
 
 .ott-nav-links {
@@ -233,7 +234,7 @@ body {
     max-width: 1440px;
     width: 100%;
     margin: 0 auto;
-    padding: 2.5rem 3.5rem 4rem;
+    padding: 2.5rem 4rem 5rem;
     flex: 1;
 }
 
@@ -241,13 +242,12 @@ body {
 .hero-billboard {
     position: relative;
     width: 100%;
-    min-height: 480px;
-    border-radius: var(--radius-2xl);
+    min-height: 520px;
+    border-radius: 24px;
     overflow: hidden;
-    background: #0f172a;
-    box-shadow: var(--shadow-xl);
-    margin-bottom: 3.5rem;
-    border: 1px solid rgba(226, 232, 240, 0.8);
+    background: #0a0f1e;
+    box-shadow: 0 32px 64px -16px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(226, 232, 240, 0.6);
+    margin-bottom: 4rem;
 }
 
 .billboard-backdrop {
@@ -255,97 +255,105 @@ body {
     inset: 0;
     background-image: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     background-size: cover;
-    background-position: center top;
-    transition: all 0.8s ease;
-    opacity: 0.45;
+    background-position: center;
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.55;
+    filter: saturate(1.1);
 }
 
 .billboard-overlay {
     position: absolute;
     inset: 0;
     background: 
-        linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.95) 45%, rgba(255, 255, 255, 0.35) 80%, transparent 100%),
-        linear-gradient(0deg, #f8fafc 0%, transparent 40%);
+        linear-gradient(105deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 38%, rgba(255,255,255,0.6) 62%, rgba(255,255,255,0.05) 85%, transparent 100%),
+        linear-gradient(0deg, rgba(248,250,252,0.95) 0%, rgba(248,250,252,0.2) 35%, transparent 65%);
 }
 
 .billboard-content {
     position: relative;
     z-index: 10;
-    padding: 4.5rem 4rem;
-    max-width: 740px;
+    padding: 5rem 4.5rem;
+    max-width: 760px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     height: 100%;
-    min-height: 480px;
+    min-height: 520px;
 }
 
 .billboard-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
 }
 
 .badge-tag {
-    padding: 0.35rem 0.85rem;
-    background: #ef4444;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
     color: white;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 800;
-    border-radius: 6px;
+    border-radius: 8px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+    letter-spacing: 0.07em;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
 }
 
 .badge-tech {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 800;
-    color: #2563eb;
-    letter-spacing: 0.08em;
+    color: #1d4ed8;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.9;
 }
 
 .billboard-title {
-    font-size: 3.8rem;
+    font-size: 4.2rem;
     font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.045em;
-    line-height: 1.08;
-    margin-bottom: 1.2rem;
+    color: #0a0f1e;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
+    margin-bottom: 1.25rem;
 }
 
 .billboard-synopsis {
-    font-size: 1.12rem;
-    color: #334155;
-    line-height: 1.7;
-    margin-bottom: 1.75rem;
+    font-size: 1.1rem;
+    color: #475569;
+    line-height: 1.75;
+    margin-bottom: 2rem;
     font-weight: 400;
-    max-width: 640px;
+    max-width: 600px;
 }
 
 .billboard-meta {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 2.25rem;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
     flex-wrap: wrap;
 }
 
 .meta-pill {
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: #475569;
-    background: #f1f5f9;
-    padding: 0.3rem 0.8rem;
-    border-radius: 6px;
+    background: rgba(255,255,255,0.85);
+    padding: 0.3rem 0.85rem;
+    border-radius: 9999px;
     border: 1px solid #e2e8f0;
+    backdrop-filter: blur(8px);
+    letter-spacing: 0.02em;
 }
 
 .s3-pill {
     background: rgba(37, 99, 235, 0.1);
-    color: #2563eb;
-    border-color: rgba(37, 99, 235, 0.25);
+    color: #1d4ed8;
+    border-color: rgba(37, 99, 235, 0.3);
 }
 
 .billboard-actions {
@@ -358,42 +366,47 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.9rem 2.25rem;
-    background: #2563eb;
+    padding: 1rem 2.25rem;
+    background: linear-gradient(145deg, #2563eb, #1d4ed8);
     color: white;
-    font-size: 1rem;
+    font-size: 0.97rem;
     font-weight: 700;
-    border-radius: 12px;
+    border-radius: 14px;
     text-decoration: none;
     border: none;
     cursor: pointer;
-    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
-    transition: all 0.25s ease;
+    box-shadow: 0 10px 28px rgba(37, 99, 235, 0.45), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.01em;
 }
 
 .btn-billboard-play:hover {
-    background: #1d4ed8;
-    transform: translateY(-2px);
-    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.5);
+    background: linear-gradient(145deg, #1d4ed8, #1e40af);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(37, 99, 235, 0.55);
 }
 
 .btn-billboard-info {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.9rem 1.75rem;
-    background: rgba(241, 245, 249, 0.9);
+    padding: 1rem 1.75rem;
+    background: rgba(255, 255, 255, 0.88);
     color: #0f172a;
     font-size: 0.95rem;
     font-weight: 700;
-    border-radius: 12px;
+    border-radius: 14px;
     text-decoration: none;
-    border: 1px solid #cbd5e1;
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    backdrop-filter: blur(12px);
     transition: all 0.2s ease;
 }
 
 .btn-billboard-info:hover {
-    background: #e2e8f0;
+    background: rgba(255, 255, 255, 1);
+    border-color: #94a3b8;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
 }
 
 /* Category Filter & Section Header */
@@ -468,16 +481,16 @@ body {
 /* Movie Grid & OTT Cards */
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2rem;
 }
 
 .movie-card {
     background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: var(--radius-xl);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 0 0 0 rgba(37,99,235,0);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
@@ -486,16 +499,16 @@ body {
 }
 
 .movie-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: var(--shadow-xl), 0 0 35px rgba(37, 99, 235, 0.1);
-    border-color: #94a3b8;
+    transform: translateY(-8px);
+    box-shadow: 0 24px 48px -8px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(37,99,235,0.15);
+    border-color: transparent;
     z-index: 20;
 }
 
 .poster-wrapper {
     width: 100%;
-    aspect-ratio: 16 / 10;
-    background-color: #0f172a;
+    aspect-ratio: 2 / 3;
+    background-color: #0a0f1e;
     position: relative;
     overflow: hidden;
 }
@@ -582,22 +595,24 @@ body {
 }
 
 .movie-info {
-    padding: 1.5rem 1.75rem;
+    padding: 1.25rem 1.5rem 1.4rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    flex: 1;
     background: white;
 }
 
 .movie-title {
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     font-weight: 800;
     color: #0f172a;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     margin-bottom: 0.5rem;
-    line-height: 1.35;
+    line-height: 1.4;
     transition: color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .movie-card:hover .movie-title { color: #2563eb; }
